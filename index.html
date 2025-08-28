@@ -1,52 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gift-Selection</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gift-Selection</title>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-    <div class="container" id="page1">
-        <img src="/img/background.jpg">
-        <h1>Please Select 3 Gift</h1>
-        <div class="grid">
-            <img src="/img/gift-removebg-preview.png">
-            <img src="/img/gift-removebg-preview.png">
-            <img src="/img/gift-removebg-preview.png">
-            <img src="/img/gift-removebg-preview.png">
-            <img src="/img/gift-removebg-preview.png">
-            <img src="/img/gift-removebg-preview.png">
-            
-        </div>
-        <button id="submitBtn">Submit</button>
+  <div class="container" id="page1">
+    <img src="/img/background.jpg" />
+    <h1>Please Select 3 Gifts</h1>
+    <div class="grid">
+      <img src="/img/gift-removebg-preview.png" />
+      <img src="/img/gift-removebg-preview.png" />
+      <img src="/img/gift-removebg-preview.png" />
+      <img src="/img/gift-removebg-preview.png" />
+      <img src="/img/gift-removebg-preview.png" />
+      <img src="/img/gift-removebg-preview.png" />
     </div>
+    <button id="submitBtn">Submit</button>
+  </div>
 
-    <div class="inform" style="display: none" id="page2">
-      <img src="/img/background.jpg">
-      <h1>How To Play</h1>
-      <h2>Submit the form below<br>Tap open the mysstery box & Stand a chance to <span>WIN BIG!</span></h2>
-      <input class="input1" type="text" placeholder="NAME" autocomplete="off">
-      <input class="input2" type="text" placeholder="PHONE" autocomplete="off">
-      <input class="input3" type="text" placeholder="EMAIL" autocomplete="off">
-      <button id="endBtn">Submit</button>
-    </div>
-</body>
+  <div class="inform" style="display: none" id="page2">
+    <img src="/img/background.jpg" />
+    <h1>How To Play</h1>
+    <h2>
+      Submit the form below<br/>
+      Tap open the mystery box & stand a chance to <span>WIN BIG!</span>
+    </h2>
+    <input class="input1" type="text" placeholder="NAME" autocomplete="off" />
+    <input class="input2" type="text" placeholder="PHONE" autocomplete="off" />
+    <input class="input3" type="text" placeholder="EMAIL" autocomplete="off" />
+    <button id="endBtn">Submit</button>
+  </div>
 
 <script>
-    // List of random gifts
-    const gifts = [
-      {src: "img/tryagain.png", weight: 100 },
-      {src: "img/ten per.png", weight: 85 },
-      {src: "img/twenty-five per.png", weight: 85 },
-      {src: "img/fifty per.png", weight: 70 },
-      {src: "img/seventy-five per.png", weight: 70 },
-      {src: "img/iphone.png", weight: 25 },
-      {src: "img/ipad.png", weight: 10 },
-      {src: "img/macbook.png", weight: 3 },
-      {src: "img/adv.png", weight: 2 },
-      {src: "img/mercedes.png", weight: 1 },
-    ];
+  // 🎁 List of random gifts with weight
+  const gifts = [
+    { src: "/img/tryagain.png", weight: 100 },
+    { src: "/img/ten per.png", weight: 85 },
+    { src: "/img/twenty-five per.png", weight: 85 },
+    { src: "/img/fifty per.png", weight: 70 },
+    { src: "/img/seventy-five per.png", weight: 70 },
+    { src: "/img/iphone.png", weight: 25 },
+    { src: "/img/ipad.png", weight: 10 },
+    { src: "/img/macbook.png", weight: 3 },
+    { src: "/img/adv.png", weight: 2 },
+    { src: "/img/mercedes.png", weight: 1 },
+  ];
 
   function weightedRandom(items) {
     const totalWeight = items.reduce((sum, item) => sum + item.weight, 0);
@@ -57,7 +58,7 @@
     }
   }
 
-  let totalClicks = 0; 
+  let totalClicks = 0;
   const maxClicks = 3;
 
   const gridImages = document.querySelectorAll(".grid img");
@@ -71,7 +72,7 @@
   endBtn.disabled = true;
   endBtn.style.opacity = "0.6";
 
-  // function to reset everything
+  // 🔄 Reset everything
   function resetGame() {
     totalClicks = 0;
 
@@ -88,17 +89,16 @@
 
     // reset images
     gridImages.forEach(img => {
-      img.src = "img/gift-removebg-preview.png"; // put your default placeholder image
+      img.src = "/img/gift-removebg-preview.png"; // ✅ fixed path
       img.style.pointerEvents = "auto";
       img.style.opacity = "1";
       img.style.cursor = "pointer";
     });
 
-    // reattach events
-    attachImageEvents();
+    attachImageEvents(); // reattach events
   }
 
-  // attach click events to images
+  // 🎯 attach click events to images
   function attachImageEvents() {
     gridImages.forEach(img => {
       img.onclick = function handleClick() {
@@ -112,10 +112,13 @@
         img.style.cursor = "default";
 
         if (totalClicks >= maxClicks) {
+          // disable rest
           gridImages.forEach(imgEl => {
+            if (!imgEl.src.includes("gift-removebg-preview.png")) return;
             imgEl.style.pointerEvents = "none";
             imgEl.style.opacity = "0.6";
           });
+
           submitBtn.disabled = false;
           submitBtn.style.opacity = "1";
         }
@@ -126,43 +129,31 @@
   // run once at start
   attachImageEvents();
 
-  // Submit button
+  // 📝 Submit button
   submitBtn.addEventListener("click", () => {
     document.getElementById("page1").style.display = "none";
     document.getElementById("page2").style.display = "block";
     alert("Please fill your information before submit");
   });
 
-  // check inputs
+  // ✅ check inputs
   function checkInputs() {
-    let allFilled = true;
-    inputs.forEach(input => {
-      if (input.value.trim() === "") {
-        allFilled = false;
-      }
-    });
-
-    if (allFilled) {
-      endBtn.disabled = false;
-      endBtn.style.opacity = "1";
-    } else {
-      endBtn.disabled = true;
-      endBtn.style.opacity = "0.6";
-    }
+    let allFilled = [...inputs].every(input => input.value.trim() !== "");
+    endBtn.disabled = !allFilled;
+    endBtn.style.opacity = allFilled ? "1" : "0.6";
   }
 
   inputs.forEach(input => {
     input.addEventListener("input", checkInputs);
   });
 
-  // End button
+  // ✅ End button
   endBtn.addEventListener("click", () => {
-    alert("Thanks For Your Participate");
+    alert("Thanks For Your Participation 🎉");
     document.getElementById("page1").style.display = "block";
     document.getElementById("page2").style.display = "none";
-    resetGame(); // ✅ reset everything after alert
+    resetGame(); // reset after thank you
   });
-
-  </script>
-
+</script>
+</body>
 </html>
