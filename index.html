@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gift-Selection</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container" id="page1">
+        <img src="/img/background.jpg">
+        <h1>Please Select 3 Gift</h1>
+        <div class="grid">
+            <img src="/img/gift-removebg-preview.png">
+            <img src="/img/gift-removebg-preview.png">
+            <img src="/img/gift-removebg-preview.png">
+            <img src="/img/gift-removebg-preview.png">
+            <img src="/img/gift-removebg-preview.png">
+            <img src="/img/gift-removebg-preview.png">
+        </div>
+        <button id="submitBtn">Submit</button>
+    </div>
+
+    <div class="inform" style="display: none" id="page2">
+      <img src="/img/background.jpg">
+      <h1>How To Play</h1>
+      <h2>Submit the form below<br>Tap open the mysstery box & Stand a chance to <span>WIN BIG!</span></h2>
+      <input class="input1" type="text" placeholder="NAME" autocomplete="off">
+      <input class="input2" type="text" placeholder="PHONE" autocomplete="off">
+      <input class="input3" type="text" placeholder="EMAIL" autocomplete="off">
+      <button id="endBtn">Submit</button>
+    </div>
+</body>
+
+<script>
+    // List of random gifts
+    const gifts = [
+      {src: "img/tryagain.png", weight: 100 },
+      {src: "img/ten per.png", weight: 85 },
+      {src: "img/twenty-five per.png", weight: 85 },
+      {src: "img/fifty per.png", weight: 70 },
+      {src: "img/seventy-five per.png", weight: 70 },
+      {src: "img/iphone.png", weight: 25 },
+      {src: "img/ipad.png", weight: 10 },
+      {src: "img/macbook.png", weight: 3 },
+      {src: "img/adv.png", weight: 2 },
+      {src: "img/mercedes.png", weight: 1 },
+    ];
+
+  function weightedRandom(items) {
+    const totalWeight = items.reduce((sum, item) => sum + item.weight, 0);
+    let random = Math.random() * totalWeight;
+    for (let item of items) {
+      if (random < item.weight) return item;
+      random -= item.weight;
+    }
+  }
+
+  let totalClicks = 0; 
+  const maxClicks = 3;
+
+  const gridImages = document.querySelectorAll(".grid img");
+  const submitBtn = document.getElementById("submitBtn");
+  const endBtn = document.getElementById("endBtn");
+  const inputs = document.querySelectorAll("#page2 input");
+
+  // disable buttons at start
+  submitBtn.disabled = true;
+  submitBtn.style.opacity = "0.6";
+  endBtn.disabled = true;
+  endBtn.style.opacity = "0.6";
+
+  // function to reset everything
+  function resetGame() {
+    totalClicks = 0;
+
+    // reset submit button
+    submitBtn.disabled = true;
+    submitBtn.style.opacity = "0.6";
+
+    // reset end button
+    endBtn.disabled = true;
+    endBtn.style.opacity = "0.6";
+
+    // reset inputs
+    inputs.forEach(input => input.value = "");
+
+    // reset images
+    gridImages.forEach(img => {
+      img.src = "img/gift-removebg-preview.png"; // put your default placeholder image
+      img.style.pointerEvents = "auto";
+      img.style.opacity = "1";
+      img.style.cursor = "pointer";
+    });
+
+    // reattach events
+    attachImageEvents();
+  }
+
+  // attach click events to images
+  function attachImageEvents() {
+    gridImages.forEach(img => {
+      img.onclick = function handleClick() {
+        if (totalClicks >= maxClicks) return;
+
+        const randomGift = weightedRandom(gifts);
+        img.src = randomGift.src;
+
+        totalClicks++;
+        img.onclick = null;
+        img.style.cursor = "default";
+
+        if (totalClicks >= maxClicks) {
+          gridImages.forEach(imgEl => {
+            imgEl.style.pointerEvents = "none";
+            imgEl.style.opacity = "0.6";
+          });
+          submitBtn.disabled = false;
+          submitBtn.style.opacity = "1";
+        }
+      };
+    });
+  }
+
+  // run once at start
+  attachImageEvents();
+
+  // Submit button
+  submitBtn.addEventListener("click", () => {
+    document.getElementById("page1").style.display = "none";
+    document.getElementById("page2").style.display = "block";
+    alert("Please fill your information before submit");
+  });
+
+  // check inputs
+  function checkInputs() {
+    let allFilled = true;
+    inputs.forEach(input => {
+      if (input.value.trim() === "") {
+        allFilled = false;
+      }
+    });
+
+    if (allFilled) {
+      endBtn.disabled = false;
+      endBtn.style.opacity = "1";
+    } else {
+      endBtn.disabled = true;
+      endBtn.style.opacity = "0.6";
+    }
+  }
+
+  inputs.forEach(input => {
+    input.addEventListener("input", checkInputs);
+  });
+
+  // End button
+  endBtn.addEventListener("click", () => {
+    alert("Thanks For Your Participate");
+    document.getElementById("page1").style.display = "block";
+    document.getElementById("page2").style.display = "none";
+    resetGame(); // ✅ reset everything after alert
+  });
+
+  </script>
+
+</html>
