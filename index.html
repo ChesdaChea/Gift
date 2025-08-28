@@ -9,27 +9,30 @@
 <body>
   <!-- Page 1 -->
   <div class="container" id="page1">
-    <img src="/img/background.jpg">
-    <h1>Please Select 3 Gifts</h1>
-    <div class="grid">
-      <img src="/img/gift-removebg-preview.png">
-      <img src="/img/gift-removebg-preview.png">
-      <img src="/img/gift-removebg-preview.png">
-      <img src="/img/gift-removebg-preview.png">
-      <img src="/img/gift-removebg-preview.png">
-      <img src="/img/gift-removebg-preview.png">
+    <h1 class="div1" style="text-align: center; color: white;" >Please Select 3 Gifts</h1>
+    <div class="div2" style="display: flex; justify-content: center;">
+      <div class="grid">
+        <img src="/img/gift-removebg-preview.png">
+        <img src="/img/gift-removebg-preview.png">
+        <img src="/img/gift-removebg-preview.png">
+        <img src="/img/gift-removebg-preview.png">
+        <img src="/img/gift-removebg-preview.png">
+        <img src="/img/gift-removebg-preview.png">
+      </div>
     </div>
+   
     <button id="submitBtn" disabled>Submit</button>
   </div>
 
   <!-- Page 2 -->
   <div class="inform" style="display:none;" id="page2">
-    <img src="/img/background.jpg">
-    <h1>How To Play</h1>
-    <h2>Submit the form below<br>Tap open the mystery box & stand a chance to <span>WIN BIG!</span></h2>
-    <input class="input1" type="text" placeholder="NAME" autocomplete="off">
-    <input class="input2" type="text" placeholder="PHONE" autocomplete="off">
-    <input class="input3" type="text" placeholder="EMAIL" autocomplete="off">
+    <h1 class="head1" style="text-align: center; color: white;">How To Play</h1>
+    <h2 class="head2" style="text-align: center; color: white;">Submit the form below<br>Tap open the mystery box & stand a chance to <span>WIN BIG!</span></h2>
+    <div class="input" style="display: flex; justify-content: center;">
+      <input class="input1" type="text" placeholder="NAME" autocomplete="off">
+      <input class="input2" type="text" placeholder="PHONE" autocomplete="off">
+      <input class="input3" type="text" placeholder="EMAIL" autocomplete="off">
+    </div>
     <button id="endBtn" disabled>Submit</button>
   </div>
 
