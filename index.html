@@ -1,41 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gift-Selection</title>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Page 1 -->
   <div class="container" id="page1">
-    <img src="/img/background.jpg" />
+    <img src="/img/background.jpg">
     <h1>Please Select 3 Gifts</h1>
     <div class="grid">
-      <img src="/img/gift-removebg-preview.png" />
-      <img src="/img/gift-removebg-preview.png" />
-      <img src="/img/gift-removebg-preview.png" />
-      <img src="/img/gift-removebg-preview.png" />
-      <img src="/img/gift-removebg-preview.png" />
-      <img src="/img/gift-removebg-preview.png" />
+      <img src="/img/gift-removebg-preview.png">
+      <img src="/img/gift-removebg-preview.png">
+      <img src="/img/gift-removebg-preview.png">
+      <img src="/img/gift-removebg-preview.png">
+      <img src="/img/gift-removebg-preview.png">
+      <img src="/img/gift-removebg-preview.png">
     </div>
-    <button id="submitBtn">Submit</button>
+    <button id="submitBtn" disabled>Submit</button>
   </div>
 
-  <div class="inform" style="display: none" id="page2">
-    <img src="/img/background.jpg" />
+  <!-- Page 2 -->
+  <div class="inform" style="display:none;" id="page2">
+    <img src="/img/background.jpg">
     <h1>How To Play</h1>
-    <h2>
-      Submit the form below<br/>
-      Tap open the mystery box & stand a chance to <span>WIN BIG!</span>
-    </h2>
-    <input class="input1" type="text" placeholder="NAME" autocomplete="off" />
-    <input class="input2" type="text" placeholder="PHONE" autocomplete="off" />
-    <input class="input3" type="text" placeholder="EMAIL" autocomplete="off" />
-    <button id="endBtn">Submit</button>
+    <h2>Submit the form below<br>Tap open the mystery box & stand a chance to <span>WIN BIG!</span></h2>
+    <input class="input1" type="text" placeholder="NAME" autocomplete="off">
+    <input class="input2" type="text" placeholder="PHONE" autocomplete="off">
+    <input class="input3" type="text" placeholder="EMAIL" autocomplete="off">
+    <button id="endBtn" disabled>Submit</button>
   </div>
 
 <script>
-  // 🎁 List of random gifts with weight
+window.onload = function() {
+  // 🎁 Gift list
   const gifts = [
     { src: "/img/tryagain.png", weight: 100 },
     { src: "/img/ten per.png", weight: 85 },
@@ -66,42 +66,28 @@
   const endBtn = document.getElementById("endBtn");
   const inputs = document.querySelectorAll("#page2 input");
 
-  // disable buttons at start
-  submitBtn.disabled = true;
-  submitBtn.style.opacity = "0.6";
-  endBtn.disabled = true;
-  endBtn.style.opacity = "0.6";
-
-  // 🔄 Reset everything
+  // 🔄 Reset game
   function resetGame() {
     totalClicks = 0;
-
-    // reset submit button
     submitBtn.disabled = true;
-    submitBtn.style.opacity = "0.6";
-
-    // reset end button
     endBtn.disabled = true;
-    endBtn.style.opacity = "0.6";
 
-    // reset inputs
     inputs.forEach(input => input.value = "");
 
-    // reset images
     gridImages.forEach(img => {
-      img.src = "/img/gift-removebg-preview.png"; // ✅ fixed path
+      img.src = "/img/gift-removebg-preview.png";
       img.style.pointerEvents = "auto";
       img.style.opacity = "1";
       img.style.cursor = "pointer";
     });
 
-    attachImageEvents(); // reattach events
+    attachImageEvents();
   }
 
-  // 🎯 attach click events to images
+  // 🎯 Attach click events
   function attachImageEvents() {
     gridImages.forEach(img => {
-      img.onclick = function handleClick() {
+      img.onclick = function() {
         if (totalClicks >= maxClicks) return;
 
         const randomGift = weightedRandom(gifts);
@@ -112,21 +98,13 @@
         img.style.cursor = "default";
 
         if (totalClicks >= maxClicks) {
-          // disable rest
-          gridImages.forEach(imgEl => {
-            if (!imgEl.src.includes("gift-removebg-preview.png")) return;
-            imgEl.style.pointerEvents = "none";
-            imgEl.style.opacity = "0.6";
-          });
-
+          gridImages.forEach(el => el.style.pointerEvents = "none");
           submitBtn.disabled = false;
-          submitBtn.style.opacity = "1";
         }
       };
     });
   }
 
-  // run once at start
   attachImageEvents();
 
   // 📝 Submit button
@@ -136,24 +114,21 @@
     alert("Please fill your information before submit");
   });
 
-  // ✅ check inputs
+  // ✅ Check inputs
   function checkInputs() {
     let allFilled = [...inputs].every(input => input.value.trim() !== "");
     endBtn.disabled = !allFilled;
-    endBtn.style.opacity = allFilled ? "1" : "0.6";
   }
-
-  inputs.forEach(input => {
-    input.addEventListener("input", checkInputs);
-  });
+  inputs.forEach(input => input.addEventListener("input", checkInputs));
 
   // ✅ End button
   endBtn.addEventListener("click", () => {
     alert("Thanks For Your Participation 🎉");
     document.getElementById("page1").style.display = "block";
     document.getElementById("page2").style.display = "none";
-    resetGame(); // reset after thank you
+    resetGame();
   });
+};
 </script>
 </body>
 </html>
