@@ -9,7 +9,7 @@
 <body>
   <!-- Page 1 -->
   <div class="container" id="page1">
-    <h1 class="div1" style="text-align: center; color: white;" >Please Select 3 Gifts</h1>
+    <h1 class="div1" style="text-align: center; color: white;">Please Select 3 Gifts</h1>
     <div class="div2" style="display: flex; justify-content: center;">
       <div class="grid">
         <img src="/img/gift-removebg-preview.png">
@@ -20,15 +20,17 @@
         <img src="/img/gift-removebg-preview.png">
       </div>
     </div>
-   
     <button id="submitBtn" disabled>Submit</button>
   </div>
 
   <!-- Page 2 -->
   <div class="inform" style="display:none;" id="page2">
     <h1 class="head1" style="text-align: center; color: white;">How To Play</h1>
-    <h2 class="head2" style="text-align: center; color: white;">Submit the form below<br>Tap open the mystery box & stand a chance to <span>WIN BIG!</span></h2>
-    <div class="input" style="display: flex; justify-content: center;">
+    <h2 class="head2" style="text-align: center; color: white;">
+      Submit the form below<br>
+      Tap open the mystery box & stand a chance to <span>WIN BIG!</span>
+    </h2>
+    <div class="input" style="display: flex; justify-content: center; flex-direction: column; gap: 10px; max-width: 300px; margin:auto;">
       <input class="input1" type="text" placeholder="NAME" autocomplete="off">
       <input class="input2" type="text" placeholder="PHONE" autocomplete="off">
       <input class="input3" type="text" placeholder="EMAIL" autocomplete="off">
@@ -36,102 +38,144 @@
     <button id="endBtn" disabled>Submit</button>
   </div>
 
-<script>
-window.onload = function() {
-  // 🎁 Gift list
-  const gifts = [
-    { src: "/img/tryagain.png", weight: 100 },
-    { src: "/img/ten per.png", weight: 85 },
-    { src: "/img/twenty-five per.png", weight: 85 },
-    { src: "/img/fifty per.png", weight: 70 },
-    { src: "/img/seventy-five per.png", weight: 70 },
-    { src: "/img/iphone.png", weight: 25 },
-    { src: "/img/ipad.png", weight: 10 },
-    { src: "/img/macbook.png", weight: 3 },
-    { src: "/img/adv.png", weight: 2 },
-    { src: "/img/mercedes.png", weight: 1 },
-  ];
+  <!-- Firebase SDK -->
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-analytics.js";
+  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-  function weightedRandom(items) {
-    const totalWeight = items.reduce((sum, item) => sum + item.weight, 0);
-    let random = Math.random() * totalWeight;
-    for (let item of items) {
-      if (random < item.weight) return item;
-      random -= item.weight;
+  // Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyCNabg_hYv-iqCe9xgt8Zv1zDlrlFvTjIQ",
+    authDomain: "gift-791a1.firebaseapp.com",
+    projectId: "gift-791a1",
+    storageBucket: "gift-791a1.firebasestorage.app",
+    messagingSenderId: "400488079477",
+    appId: "1:400488079477:web:6659d847010cf00d00183c",
+    measurementId: "G-CZ6ZK6V850"
+  };
+
+  // Init Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const db = getFirestore(app);
+
+  // 🎁 Game logic
+  window.onload = function() {
+    const gifts = [
+      { name: "Try Again", src: "/img/tryagain.png", weight: 100 },
+      { name: "10% Off", src: "/img/ten per.png", weight: 85 },
+      { name: "25% Off", src: "/img/twenty-five per.png", weight: 85 },
+      { name: "50% Off", src: "/img/fifty per.png", weight: 70 },
+      { name: "75% Off", src: "/img/seventy-five per.png", weight: 70 },
+      { name: "iPhone", src: "/img/iphone.png", weight: 25 },
+      { name: "iPad", src: "/img/ipad.png", weight: 10 },
+      { name: "MacBook", src: "/img/macbook.png", weight: 3 },
+      { name: "Adv", src: "/img/adv.png", weight: 2 },
+      { name: "Mercedes", src: "/img/mercedes.png", weight: 1 },
+    ];
+
+    function weightedRandom(items) {
+      const totalWeight = items.reduce((sum, item) => sum + item.weight, 0);
+      let random = Math.random() * totalWeight;
+      for (let item of items) {
+        if (random < item.weight) return item;
+        random -= item.weight;
+      }
     }
-  }
 
-  let totalClicks = 0;
-  const maxClicks = 3;
+    let totalClicks = 0;
+    const maxClicks = 3;
+    let selectedGifts = []; // store selected gifts
 
-  const gridImages = document.querySelectorAll(".grid img");
-  const submitBtn = document.getElementById("submitBtn");
-  const endBtn = document.getElementById("endBtn");
-  const inputs = document.querySelectorAll("#page2 input");
+    const gridImages = document.querySelectorAll(".grid img");
+    const submitBtn = document.getElementById("submitBtn");
+    const endBtn = document.getElementById("endBtn");
+    const inputs = document.querySelectorAll("#page2 input");
 
-  // 🔄 Reset game
-  function resetGame() {
-    totalClicks = 0;
-    submitBtn.disabled = true;
-    endBtn.disabled = true;
+    const input1 = document.querySelector(".input1"); // NAME
+    const input2 = document.querySelector(".input2"); // PHONE
+    const input3 = document.querySelector(".input3"); // EMAIL
 
-    inputs.forEach(input => input.value = "");
+    function resetGame() {
+      totalClicks = 0;
+      selectedGifts = [];
+      submitBtn.disabled = true;
+      endBtn.disabled = true;
+      inputs.forEach(input => input.value = "");
+      gridImages.forEach(img => {
+        img.src = "/img/gift-removebg-preview.png";
+        img.style.pointerEvents = "auto";
+        img.style.opacity = "1";
+        img.style.cursor = "pointer";
+      });
+      attachImageEvents();
+    }
 
-    gridImages.forEach(img => {
-      img.src = "/img/gift-removebg-preview.png";
-      img.style.pointerEvents = "auto";
-      img.style.opacity = "1";
-      img.style.cursor = "pointer";
-    });
-
+    function attachImageEvents() {
+      gridImages.forEach(img => {
+        img.onclick = function() {
+          if (totalClicks >= maxClicks) return;
+          const randomGift = weightedRandom(gifts);
+          img.src = randomGift.src;
+          selectedGifts.push(randomGift.name); // store gift type
+          totalClicks++;
+          img.onclick = null;
+          img.style.cursor = "default";
+          if (totalClicks >= maxClicks) {
+            gridImages.forEach(el => el.style.pointerEvents = "none");
+            submitBtn.disabled = false;
+          }
+        };
+      });
+    }
     attachImageEvents();
-  }
 
-  // 🎯 Attach click events
-  function attachImageEvents() {
-    gridImages.forEach(img => {
-      img.onclick = function() {
-        if (totalClicks >= maxClicks) return;
-
-        const randomGift = weightedRandom(gifts);
-        img.src = randomGift.src;
-
-        totalClicks++;
-        img.onclick = null;
-        img.style.cursor = "default";
-
-        if (totalClicks >= maxClicks) {
-          gridImages.forEach(el => el.style.pointerEvents = "none");
-          submitBtn.disabled = false;
-        }
-      };
+    submitBtn.addEventListener("click", () => {
+      document.getElementById("page1").style.display = "none";
+      document.getElementById("page2").style.display = "block";
+      alert("Please fill your information before submit");
     });
-  }
 
-  attachImageEvents();
+    input1.addEventListener("input", function() {
+      this.value = this.value.replace(/[^a-zA-Z\s]/g, "");
+      checkInputs();
+    });
+    input2.addEventListener("input", function() {
+      this.value = this.value.replace(/[^0-9]/g, "");
+      checkInputs();
+    });
+    input3.addEventListener("input", function() {
+      checkInputs();
+    });
 
-  // 📝 Submit button
-  submitBtn.addEventListener("click", () => {
-    document.getElementById("page1").style.display = "none";
-    document.getElementById("page2").style.display = "block";
-    alert("Please fill your information before submit");
-  });
+    function checkInputs() {
+      const validName = input1.value.trim().length > 0;
+      const validPhone = /^\d+$/.test(input2.value.trim());
+      const validEmail = input3.value.includes("@");
+      endBtn.disabled = !(validName && validPhone && validEmail);
+    }
 
-  // ✅ Check inputs
-  function checkInputs() {
-    let allFilled = [...inputs].every(input => input.value.trim() !== "");
-    endBtn.disabled = !allFilled;
-  }
-  inputs.forEach(input => input.addEventListener("input", checkInputs));
-
-  // ✅ End button
-  endBtn.addEventListener("click", () => {
-    alert("Thanks For Your Participation 🎉");
-    document.getElementById("page1").style.display = "block";
-    document.getElementById("page2").style.display = "none";
-    resetGame();
-  });
-};
-</script>
+    // ✅ Save to Firestore on Submit
+    endBtn.addEventListener("click", async () => {
+      try {
+        await addDoc(collection(db, "user-info"), {
+          name: input1.value.trim(),
+          phone: input2.value.trim(),
+          email: input3.value.trim(),
+          gifts: selectedGifts,  // save selected gifts
+          createdAt: new Date()
+        });
+        alert("Thanks For Your Participation 🎉 Your info & gifts are saved.");
+        document.getElementById("page1").style.display = "block";
+        document.getElementById("page2").style.display = "none";
+        resetGame();
+      } catch (e) {
+        console.error("Error adding document: ", e);
+        alert("❌ Failed to save your info. Try again.");
+      }
+    });
+  };
+  </script>
 </body>
 </html>
