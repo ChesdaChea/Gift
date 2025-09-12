@@ -100,9 +100,6 @@ button{
 .input1,
 .input2,
 .input3{
-    display: flex;
-    
-    /* margin-left: 720px; */
     width: 500px;
     height: 40px;
     padding: 5px;
@@ -111,6 +108,7 @@ button{
     color: rgb(241, 78, 78);
     font-size: 20px;
     padding-left: 20px;
+    margin-left: -100px;
 }
 }
 
